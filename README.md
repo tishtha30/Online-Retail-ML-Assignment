@@ -19,3 +19,10 @@ This repository supports the MSc coursework submission for Coventry University.
 GitHub link is included in the abstract as required.
 
 ## 🛠 Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/tishtha30/Online-Retail-ML-Assignment.git
+pip install -r requirements.txt
+python code/Online_Retail_ML.py

@@ -1,24 +1,20 @@
-#DATA PREPROCESSING CODE
-
 import pandas as pd
 import numpy as np
 
-# STEP 1: Load dataset
+# Load dataset
 df = pd.read_csv("D:/CU/7072_ML/Assignment/OnlineRetail.csv", encoding="utf-8-sig")
 print("Original shape:", df.shape)
 print(df.columns.tolist())
 
-# Cleaning
 df.drop_duplicates(inplace=True)
 df = df.dropna(subset=['CustomerID'])
 df = df[(df['Quantity'] > 0) & (df['UnitPrice'] > 0)]
 df = df[df['Country'] == 'United Kingdom']
-print("Rows left:", df.shape)
 
-# Feature engineering
 df['Total'] = df['Quantity'] * df['UnitPrice']
 max_date = pd.to_datetime(df['InvoiceDate'], dayfirst=True, errors='coerce').max()
 
+# Create customer feature
 features = (
     df.groupby('CustomerID')
       .agg(Total_Spend=('Total','sum'),
@@ -28,7 +24,6 @@ features = (
       .reset_index()
 )
 
-features['Recency'] = (max_date - pd.to_datetime(features['Last_Date'], dayfirst=True, errors='coerce')).dt.days
+features['Recency'] = (max_date - pd.to_datetime(features['Last_Date'], dayfirst=True)).dt.days
 features['Avg_Basket'] = features['Quantity'] / features['Orders']
-print(features.shape)
 

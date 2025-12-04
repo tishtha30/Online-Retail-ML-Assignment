@@ -1,0 +1,44 @@
+# CLUSTERING AND ANOMALY DETECTION CODE
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+# Scaling
+X = features[['Total_Spend','Orders','Quantity','Recency','Avg_Basket']].copy()
+X = StandardScaler().fit_transform(X)
+
+# K-Means
+kmeans = KMeans(n_clusters=4, random_state=0)
+features['Cluster'] = kmeans.fit_predict(X)
+
+print(features.groupby('Cluster')[['Total_Spend','Orders','Recency']].mean())
+print(features.groupby('Cluster')[['Avg_Basket']].mean())
+
+# Metrics for all models
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.mixture import GaussianMixture
+
+X_eval = StandardScaler().fit_transform(
+    features[['Total_Spend','Orders','Quantity','Recency']]
+)
+
+sil_km  = silhouette_score(X_eval, features['Cluster'])
+dbi_km  = davies_bouldin_score(X_eval, features['Cluster'])
+
+agg = AgglomerativeClustering(n_clusters=4, linkage='ward')
+labels_agg = agg.fit_predict(X_eval)
+sil_agg = silhouette_score(X_eval, labels_agg)
+dbi_agg = davies_bouldin_score(X_eval, labels_agg)
+
+gmm = GaussianMixture(n_components=4, random_state=0)
+labels_gmm = gmm.fit_predict(X_eval)
+sil_gmm = silhouette_score(X_eval, labels_gmm)
+dbi_gmm = davies_bouldin_score(X_eval, labels_gmm)
+
+print("Silhouette  |  DB-Index")
+print(f"K-Means:        {sil_km:.3f}  |  {dbi_km:.3f}")
+print(f"Agglomerative:  {sil_agg:.3f}  |  {dbi_agg:.3f}")
+print(f"GMM:            {sil_gmm:.3f}  |  {dbi_gmm:.3f}")
+
+

@@ -1,0 +1,19 @@
+# SAVED ARTIFACTS
+
+features_raw.csv
+features_scaled.csv
+clusters_kmeans.csv
+isolation_forest_top20.csv
+monthly_spend.png
+silhouette_per_cluster.png
+cluster_profile.png
+clusters_pca.png
+agglo_pca.png
+gmm_pca.png
+corr_heatmap.png
+cluster_0_radar_normalised.png
+cluster_1_radar_normalised.png
+cluster_2_radar_normalised.png
+cluster_3_radar_normalised.png
+clusters_feature_importance.png
+clusters_confusion_matrix.png

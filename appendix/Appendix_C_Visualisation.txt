@@ -1,0 +1,70 @@
+# Visualisation
+
+Monthly Trend
+df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'], dayfirst=True)
+df['YearMonth'] = df['InvoiceDate'].dt.to_period('M').astype(str)
+
+monthly = df.groupby('YearMonth').agg(
+    Total_Orders=('InvoiceNo','nunique'),
+    Total_Spend=('Total','sum')
+).reset_index()
+
+plt.plot(monthly['YearMonth'], monthly['Total_Spend'])
+plt.xticks(rotation=40)
+plt.title("Monthly Spend Trend")
+plt.savefig("monthly_spend.png")
+
+
+Silhouette per Cluster
+from sklearn.metrics import silhouette_samples
+sil_samples = silhouette_samples(X_eval, features['Cluster'])
+sil_df = pd.DataFrame({'Cluster': features['Cluster'], 'sil': sil_samples})
+
+
+Cluster Profile Bar Chart
+cluster_profile = features.groupby('Cluster')[['Total_Spend','Orders','Recency']].mean()
+cluster_profile.plot(kind='bar')
+plt.title("Average Behaviour per Cluster")
+plt.savefig("cluster_profile.png")
+
+
+PCA Clustering Plots
+from sklearn.decomposition import PCA
+p = PCA(n_components=2)
+Z = p.fit_transform(X_eval)
+
+plt.scatter(Z[:,0], Z[:,1], c=features['Cluster'])
+plt.title("K-Means Clusters (PCA)")
+plt.savefig("clusters_pca.png")
+
+
+PCA for Agglomerative
+# PCA for Agglomerative Clustering
+labels_agg = agg.fit_predict(X_eval)
+Z = p.fit_transform(X_eval)
+
+plt.scatter(Z[:,0], Z[:,1], c=labels_agg)
+plt.title("Agglomerative Clustering (PCA)")
+plt.savefig("agglo_pca.png")
+
+
+PCA for Gaussian Mixture
+# PCA for Gaussian Mixture Model
+labels_gmm = gmm.fit_predict(X_eval)
+Z = p.fit_transform(X_eval)
+
+plt.scatter(Z[:,0], Z[:,1], c=labels_gmm)
+plt.title("Gaussian Mixture Model (PCA)")
+plt.savefig("gmm_pca.png")
+
+
+
+Radar Charts
+radar_features = ['Total_Spend','Orders','Quantity','Recency','Avg_Basket']
+cluster_profile = features.groupby('Cluster')[radar_features].mean()
+norm_profile = (cluster_profile - cluster_profile.min()) / (cluster_profile.max() - cluster_profile.min())
+
+
+Correlation heatmap
+sns.heatmap(features[['Total_Spend','Orders','Quantity','Recency']].corr(), annot=True)
+
